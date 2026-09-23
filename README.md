@@ -73,219 +73,252 @@ The conversation ends when the user types Bye, Exit, or Quit.
 ```
 ## PROGRAM
 ```
-import re
-import random
+import re 
+import random 
 
-knowledge_base = {
-    "greeting": {
-        "patterns": [
-            r"\bhi\b",
-            r"\bhello\b",
-            r"\bhey\b",
-            r"\bgood morning\b",
-            r"\bgood afternoon\b"
-        ],
-        "responses": [
-            "Hello! Welcome to the College Admission Help Desk. "
-            "How can I assist you today?"
-        ]
-    },
+knowledge_base = { 
+    "greeting": { 
+        "patterns": [ 
+            r"\bhi\b", 
+            r"\bhello\b", 
+            r"\bhey\b", 
+            r"\bgood morning\b", 
+            r"\bgood afternoon\b" 
+        ], 
+        "responses": [ 
+            "Hello! Welcome to the College Admission Help Desk. " 
+            "How can I assist you today?" 
+        ] 
+    }, 
+ 
+    "courses": { 
+        "patterns": [ 
+            r"\bcourse\b", 
+            r"\bprogram\b", 
+            r"\bdegree\b", 
+            r"\bstream\b", 
+            r"\bbranch\b" 
+        ], 
+        "responses": [ 
+            "Our college offers undergraduate programs in Computer Science, " 
+            "Electronics and Communication, Electrical Engineering, " 
+            "Information Technology and Mechanical Engineering." 
+        ] 
+    }, 
+ 
+    "eligibility": { 
+        "patterns": [ 
+            r"\beligibility\b", 
+            r"\bqualification\b", 
+            r"\bmarks\b", 
+            r"\bpercentage\b", 
+            r"\bcriteria\b" 
+        ], 
+        "responses": [ 
+            "Students seeking admission to undergraduate programs should " 
+            "have completed 12th standard with the required subjects and " 
+            "minimum qualifying marks." 
+        ] 
+    }, 
+ 
+    "admission": { 
+        "patterns": [ 
+            r"\badmission\b", 
+            r"\bjoin\b", 
+            r"\bseat\b", 
+            r"\bselection\b", 
+            r"\benrollment\b" 
+        ], 
+        "responses": [ 
+            "Admission is based on academic performance and the applicable " 
+            "entrance or counselling process. Selected students can complete " 
+            "their enrollment through the admission office." 
+        ] 
+    }, 
+ 
+    "fees": { 
+        "patterns": [ 
+            r"\bfee\b", 
+            r"\bfees\b", 
+            r"\btuition\b", 
+            r"\bcost\b", 
+            r"\bpayment\b" 
+        ], 
+        "responses": [ 
+            "The fee structure depends on the selected course and admission " 
+            "category. Students can contact the admission office for the " 
+            "latest fee details." 
+        ] 
+    }, 
+ 
+    "dates": { 
+        "patterns": [ 
+            r"\blast date\b", 
+            r"\bdeadline\b", 
+            r"\bschedule\b", 
+            r"\bdate\b", 
+            r"\bwhen\b" 
+        ], 
+        "responses": [ 
+            "Admission dates vary each academic year. Please check the " 
+            "official college admission notification for the latest schedule." 
+        ] 
+    }, 
+ 
+    "application_process": { 
+        "patterns": [ 
+            r"\bapply\b", 
+            r"\bapplication\b", 
+            r"\bregister\b", 
+            r"\bonline application\b", 
+            r"\bhow to apply\b" 
+        ], 
+        "responses": [ 
+            "To apply, complete the online application form, enter your " 
+            "academic details, upload the required documents and submit " 
+            "the application before the deadline." 
+        ] 
+    }, 
+ 
+    "documents": { 
+        "patterns": [ 
+            r"\bdocument\b", 
+            r"\bdocuments\b", 
+            r"\bcertificate\b", 
+            r"\bmarksheet\b", 
+            r"\bproof\b" 
+        ], 
+        "responses": [ 
+            "Required documents generally include 10th and 12th mark sheets, " 
+            "transfer certificate, community certificate, photographs, " 
+            "identity proof and other applicable certificates." 
+        ] 
+    }, 
+ 
+    "hostel": { 
+        "patterns": [ 
+            r"\bhostel\b", 
+            r"\baccommodation\b", 
+            r"\broom\b", 
+            r"\bmess\b", 
+            r"\bstay\b" 
+        ], 
+        "responses": [ 
+            "Hostel accommodation is available for eligible students with " 
+            "separate facilities, mess services, Wi-Fi and basic security." 
+        ] 
+    }, 
+ 
+    "contact": { 
+        "patterns": [ 
+            r"\bcontact\b", 
+            r"\bphone\b", 
+            r"\bemail\b", 
+            r"\baddress\b", 
+            r"\badmission office\b" 
+        ], 
+        "responses": [ 
+            "For admission-related queries, you can contact the college " 
+            "admission office through the official phone number or email." 
+        ] 
+    }, 
+ 
+    "thanks / goodbye": { 
+        "patterns": [ 
+            r"\bthank\b", 
+            r"\bthanks\b", 
+            r"\bbye\b", 
+            r"\bsee you\b", 
+            r"\bexit\b", 
+            r"\bquit\b" 
+        ], 
+        "responses": [ 
+            "Thank you for contacting the College Admission Help Desk. " 
+            "Wishing you all the best for your admission!" 
+        ] 
+    } 
+} 
+ 
+ 
 
-    "courses": {
-        "patterns": [
-            r"\bcourse\b",
-            r"\bprogram\b",
-            r"\bbranch\b",
-            r"\bdepartment\b",
-            r"\bspecialization\b"
-        ],
-        "responses": [
-            "We offer B.Tech programs in Information Technology, "
-            "Computer Science, ECE, EEE and Mechanical Engineering, "
-            "along with M.Tech and MBA programs."
-        ]
-    },
+fallback_responses = [ 
+    "I'm sorry, I did not quite understand that. " 
+    "Could you please rephrase your question?", 
+ 
+    "I can help with courses, eligibility, admission, fees, " 
+    "application process, documents, hostel and contact details." 
+] 
+ 
+ 
 
-    "eligibility": {
-        "patterns": [
-            r"\beligibility\b",
-            r"\bqualification\b",
-            r"\bcriteria\b",
-            r"\bcutoff\b"
-        ],
-        "responses": [
-            "For B.Tech, candidates must have completed 10+2 with "
-            "Physics, Chemistry and Mathematics, securing at least "
-            "60% aggregate marks."
-        ]
-    },
+def match_intent(user_input): 
+    user_input = user_input.lower() 
+ 
+    for intent, data in knowledge_base.items(): 
+        for pattern in data["patterns"]: 
+            if re.search(pattern, user_input): 
+                return intent 
+ 
+    return None 
+ 
+ 
 
-    "fees": {
-        "patterns": [
-            r"\bfee\b",
-            r"\btuition\b",
-            r"\bcost\b",
-            r"\bscholarship\b"
-        ],
-        "responses": [
-            "The annual tuition fee for B.Tech programs is approximately "
-            "Rs. 85,000. Merit and government scholarships are also "
-            "available for eligible students."
-        ]
-    },
+def get_response(user_input): 
+    intent = match_intent(user_input) 
+ 
+    if intent: 
+        return random.choice(knowledge_base[intent]["responses"]) 
+ 
+    return random.choice(fallback_responses) 
+ 
+ 
 
-    "dates": {
-        "patterns": [
-            r"\blast date\b",
-            r"\bdeadline\b",
-            r"\bschedule\b",
-            r"\bdate\b"
-        ],
-        "responses": [
-            "Admissions begin on 1st June and the last date to apply "
-            "is 31st July."
-        ]
-    },
+def chat(): 
+    print("College Admission Chatbot") 
+    print("=" * 55) 
+ 
+    while True: 
+        user_input = input("You: ") 
+        response = get_response(user_input) 
+ 
+        print("Bot:", response) 
+ 
+        if match_intent(user_input) == "thanks / goodbye": 
+            break 
+ 
+ 
 
-    "application_process": {
-        "patterns": [
-            r"\bapply\b",
-            r"\bapplication\b",
-            r"\bregister\b",
-            r"\bhow to join\b"
-        ],
-        "responses": [
-            "Apply online through the college admission portal by "
-            "filling the application form, uploading documents, and "
-            "paying the registration fee."
-        ]
-    },
-
-    "documents": {
-        "patterns": [
-            r"\bdocument\b",
-            r"\bcertificate\b",
-            r"\bmarksheet\b"
-        ],
-        "responses": [
-            "Please keep the following documents ready: 10th and 12th "
-            "mark sheets, transfer certificate, community certificate, "
-            "passport size photographs and Aadhaar card."
-        ]
-    },
-
-    "hostel": {
-        "patterns": [
-            r"\bhostel\b",
-            r"\baccommodation\b",
-            r"\broom facility\b"
-        ],
-        "responses": [
-            "Separate hostel facilities are available for boys and "
-            "girls with mess, Wi-Fi and 24x7 security on campus."
-        ]
-    },
-
-    "contact": {
-        "patterns": [
-            r"\bcontact\b",
-            r"\bphone\b",
-            r"\bemail\b",
-            r"\baddress\b"
-        ],
-        "responses": [
-            "You can reach the admission office at "
-            "admissions@college.edu.in or call +91-9876543210 "
-            "between 9 AM and 5 PM."
-        ]
-    },
-
-    "thanks / goodbye": {
-        "patterns": [
-            r"\bthank\b",
-            r"\bbye\b",
-            r"\bsee you\b",
-            r"\bexit\b",
-            r"\bquit\b"
-        ],
-        "responses": [
-            "Thank you for visiting the College Admission Help Desk. "
-            "Wishing you all the best!"
-        ]
-    }
-}
-
-
-fallback_responses = [
-    "I'm sorry, I did not quite understand that. "
-    "Could you please rephrase your question?",
-
-    "I can help with courses, eligibility, fees, application "
-    "process, documents, dates, hostel and contact details."
-]
-
-
-def match_intent(user_input):
-    user_input = user_input.lower()
-
-    for intent, data in knowledge_base.items():
-        for pattern in data["patterns"]:
-            if re.search(pattern, user_input):
-                return intent
-
-    return None
-
-def get_response(user_input):
-    intent = match_intent(user_input)
-
-    if intent:
-        return random.choice(knowledge_base[intent]["responses"])
-
-    return random.choice(fallback_responses)
-
-
-def chat():
-    print("College Admission Chatbot")
-    print("=" * 55)
-
-    while True:
-        user_input = input("You: ")
-        response = get_response(user_input)
-
-        print("Bot:", response)
-
-        if match_intent(user_input) == "thanks / goodbye":
-            break
-
-
-sample_queries = [
-    "Hi there",
-    "What courses do you offer?",
-    "What is the eligibility criteria for B.Tech?",
-    "How much is the tuition fee?",
-    "How can I apply for admission?",
-    "What documents are required?",
-    "When is the last date to apply?",
-    "Do you provide hostel facility?",
-    "What is your contact number?",
-    "Thank you for the help",
-    "Bye"
-]
-
-print("College Admission Chatbot")
-print("=" * 55)
-
-for query in sample_queries:
-    print("You:", query)
-    print("Bot:", get_response(query))
-    print("-" * 55)
+sample_queries = [ 
+    "Hi there", 
+    "What courses are available?", 
+    "What are the eligibility requirements?", 
+    "How can I get admission?", 
+    "What are the college fees?", 
+    "When is the last date for admission?", 
+    "How can I apply online?", 
+    "What documents are required?", 
+    "Is hostel accommodation available?", 
+    "How can I contact the admission office?", 
+    "Thank you for the information", 
+    "Bye" 
+] 
+ 
+print("College Admission Chatbot") 
+print("=" * 55) 
+ 
+for query in sample_queries: 
+    print("You:", query) 
+    print("Bot:", get_response(query)) 
+    print("-" * 55) 
+ 
 
 chat()
 ```
 
 ## OUTPUT
-<img width="1525" height="682" alt="Screenshot 2026-09-22 223534" src="https://github.com/user-attachments/assets/f22c543f-e6eb-4054-8802-d61ca2cfc642" />
-<img width="858" height="170" alt="Screenshot 2026-09-22 223550" src="https://github.com/user-attachments/assets/cf753ec6-7675-4406-b472-0b51e57f7ea9" />
+<img width="1715" height="701" alt="Screenshot 2026-09-23 110222" src="https://github.com/user-attachments/assets/0a929051-00c8-481d-ba36-71a3e6051eb9" />
+<img width="1046" height="150" alt="Screenshot 2026-09-23 110323" src="https://github.com/user-attachments/assets/c3d249ca-0e96-4408-a825-fc671975b069" />
+
 
 ## Conclusion
 Thus, a simple rule-based College Admission Chatbot was successfully designed, implemented and tested using Python. The chatbot uses a keyword/pattern-based knowledge base to identify the intent behind a user's question and responds with an appropriate, pre-defined answer covering courses, eligibility, fees, application process, documents, dates, hostel and contact information. The experiment demonstrates the fundamental building blocks — knowledge base design, intent matching and response generation — on which more advanced NLP-based and AI-based chatbots are built.
