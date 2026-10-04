@@ -4,7 +4,7 @@ To design, implement and test a simple rule-based chatbot in Python that answers
 ## OBJECTIVES
 To understand the basic working of a rule-based chatbot.. To create a keyword-based knowledge base for college
 admission queries.. To implement intent matching using Python regular expressions.. To test the chatbot using
-different sample queries.
+different sample queries. 
 ### Introduction
 A chatbot is a software application that simulates a conversation with a human user, typically through text. A rule-based (or pattern-matching) chatbot works by comparing the user's message against a predefined set of keywords or patterns and returning a suitable pre-written response. It does not require large training datasets or heavy computation, which makes it an easy and beginner-friendly starting point for understanding how conversational AI systems are built. In this experiment, a College Admission Chatbot is developed to act as a virtual help-desk assistant that instantly answers common queries asked by prospective students.
 ## ALGORITHM
